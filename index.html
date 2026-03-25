@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEC 轻量级回声消除系统效果演示</title>
+    <!-- 引入 Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root { --xmu-blue: #003d7c; --accent-red: #d9534f; }
+        body { background-color: #f4f7f9; font-family: 'Times New Roman', 'SimSun', serif; padding: 30px 0; }
+        .main-card { background: white; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); padding: 40px; margin-bottom: 20px; }
+        h1 { color: var(--xmu-blue); font-weight: 800; text-align: center; margin-bottom: 10px; }
+        .sub-title { text-align: center; color: #666; margin-bottom: 40px; font-size: 1.1rem; }
+        
+        /* 选项卡样式 */
+        .nav-pills .nav-link { color: #555; font-weight: 600; border-radius: 8px; padding: 12px 25px; transition: 0.3s; }
+        .nav-pills .nav-link.active { background-color: var(--xmu-blue); color: white; box-shadow: 0 4px 12px rgba(0,61,124,0.3); }
+        
+        /* 表格与媒体样式 */
+        .table { vertical-align: middle; margin-top: 20px; border-collapse: separate; border-spacing: 0; }
+        .ser-tag { background: #eee; padding: 4px 10px; border-radius: 5px; font-weight: bold; font-family: Consolas, monospace; }
+        .spec-img { width: 100%; min-width: 150px; border-radius: 6px; border: 1px solid #ddd; transition: 0.3s; cursor: zoom-in; margin-top: 8px; }
+        .spec-img:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        audio { width: 100%; height: 35px; }
+        
+        .column-header { background-color: #f8f9fa !important; font-weight: 700; color: var(--xmu-blue); text-align: center; }
+        .footer { text-align: center; margin-top: 50px; color: #999; font-size: 0.9rem; border-top: 1px solid #ddd; padding-top: 20px; }
+        
+        .alert-custom { border-left: 5px solid var(--xmu-blue); background-color: #f8f9fa; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid px-4">
+    <div class="main-card container">
+        <h1>面向全双工交互场景的回声消除系统演示</h1>
+        <div class="sub-title">硕士学位论文音频样例展示</div>
+
+        <!-- 导航选项卡 -->
+        <ul class="nav nav-pills nav-justified mb-4" id="pills-tab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="dt-tab" data-bs-toggle="tab" data-bs-target="#dt" type="button">双讲 (Double-Talk)</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="fest-tab" data-bs-toggle="tab" data-bs-target="#fest" type="button">远端单讲 (Far-End Single Talk)</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="nest-tab" data-bs-toggle="tab" data-bs-target="#nest" type="button">近端单讲 (Near-End Single Talk)</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="pills-tabContent">
+            
+            <!-- 1. 双讲 (DT) -->
+            <div class="tab-pane fade show active" id="dt" role="tabpanel">
+                <div class="alert alert-custom small"><b>双讲场景说明：</b> 在真实环境下的极低信回比工况，展示系统在强回声掩盖下提取近端微弱语音的能力。</div>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr class="column-header">
+                                <th style="width: 8%">工况</th>
+                                <th style="width: 23%">远端参考 (Ref)</th>
+                                <th style="width: 23%">原始麦克风 (Mic)</th>
+                                <th style="width: 23%">增强后 (Enhanced)</th>
+                                <th style="width: 23%">目标语音 (Target)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- -30dB -->
+                            <tr>
+                                <td class="text-center"><span class="ser-tag">-30 dB</span></td>
+                                <td><audio controls src="dt/ref100.wav"></audio><img src="dt/ref-30.png" class="spec-img"></td>
+                                <td><audio controls src="dt/origin100.wav"></audio><img src="dt/origin-30.png" class="spec-img"></td>
+                                <td><audio controls src="dt/enh50.wav"></audio><img src="dt/enh-30.png" class="spec-img"></td>
+                                <td><audio controls src="dt/target.wav"></audio><img src="dt/target.png" class="spec-img"></td>
+                            </tr>
+                            <!-- -20dB -->
+                            <tr>
+                                <td class="text-center"><span class="ser-tag">-20 dB</span></td>
+                                <td><audio controls src="dt/ref80.wav"></audio><img src="dt/ref-20.png" class="spec-img"></td>
+                                <td><audio controls src="dt/origin80.wav"></audio><img src="dt/origin-20.png" class="spec-img"></td>
+                                <td><audio controls src="dt/enh40.wav"></audio><img src="dt/enh-20.png" class="spec-img"></td>
+                                <td><audio controls src="dt/target.wav"></audio><img src="dt/target.png" class="spec-img"></td>
+                            </tr>
+                            <!-- -10dB -->
+                            <tr>
+                                <td class="text-center"><span class="ser-tag">-10 dB</span></td>
+                                <td><audio controls src="dt/ref50.wav"></audio><img src="dt/ref-10.png" class="spec-img"></td>
+                                <td><audio controls src="dt/origin50.wav"></audio><img src="dt/origin-10.png" class="spec-img"></td>
+                                <td><audio controls src="dt/enh30.wav"></audio><img src="dt/enh-10.png" class="spec-img"></td>
+                                <td><audio controls src="dt/target.wav"></audio><img src="dt/target.png" class="spec-img"></td>
+                            </tr>
+                            <!-- 0dB -->
+                            <tr>
+                                <td class="text-center"><span class="ser-tag">0 dB</span></td>
+                                <td><audio controls src="dt/ref40.wav"></audio><img src="dt/ref0.png" class="spec-img"></td>
+                                <td><audio controls src="dt/origin40.wav"></audio><img src="dt/origin0.png" class="spec-img"></td>
+                                <td><audio controls src="dt/enh20.wav"></audio><img src="dt/enh0.png" class="spec-img"></td>
+                                <td><audio controls src="dt/target.wav"></audio><img src="dt/target.png" class="spec-img"></td>
+                            </tr>
+                            <!-- 10dB -->
+                            <tr>
+                                <td class="text-center"><span class="ser-tag">10 dB</span></td>
+                                <td><audio controls src="dt/ref30.wav"></audio><img src="dt/ref10.png" class="spec-img"></td>
+                                <td><audio controls src="dt/origin30.wav"></audio><img src="dt/origin10.png" class="spec-img"></td>
+                                <td><audio controls src="dt/enh10.wav"></audio><img src="dt/enh10.png" class="spec-img"></td>
+                                <td><audio controls src="dt/target.wav"></audio><img src="dt/target.png" class="spec-img"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 2. 远端单讲 (FEST) -->
+            <div class="tab-pane fade" id="fest" role="tabpanel">
+                <div class="alert alert-custom small"><b>远端单讲说明：</b> 展示系统对回声的抑制深度，理想状态下 Enhanced 列应接近静音。</div>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr class="column-header">
+                                <th style="width: 10%">工况</th>
+                                <th style="width: 30%">远端参考 (Ref)</th>
+                                <th style="width: 30%">原始麦克风 (Mic)</th>
+                                <th style="width: 30%">增强后 (Enhanced)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-center"><span class="ser-tag">-30 dB</span></td>
+                                <td><audio controls src="fest/ref-30.wav"></audio><img src="fest/ref-30.png" class="spec-img"></td>
+                                <td><audio controls src="fest/origin-30.wav"></audio><img src="fest/origin-30.png" class="spec-img"></td>
+                                <td><audio controls src="fest/enh80.wav"></audio><img src="fest/enh-30.png" class="spec-img"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center"><span class="ser-tag">-20 dB</span></td>
+                                <td><audio controls src="fest/ref-20.wav"></audio><img src="fest/ref-20.png" class="spec-img"></td>
+                                <td><audio controls src="fest/origin-20.wav"></audio><img src="fest/origin-20.png" class="spec-img"></td>
+                                <td><audio controls src="fest/enh50.wav"></audio><img src="fest/enh-20.png" class="spec-img"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center"><span class="ser-tag">-10 dB</span></td>
+                                <td><audio controls src="fest/ref-10.wav"></audio><img src="fest/ref-10.png" class="spec-img"></td>
+                                <td><audio controls src="fest/origin-10.wav"></audio><img src="fest/origin-10.png" class="spec-img"></td>
+                                <td><audio controls src="fest/enh40.wav"></audio><img src="fest/enh-10.png" class="spec-img"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center"><span class="ser-tag">0 dB</span></td>
+                                <td><audio controls src="fest/ref0.wav"></audio><img src="fest/ref0.png" class="spec-img"></td>
+                                <td><audio controls src="fest/origin0.wav"></audio><img src="fest/origin0.png" class="spec-img"></td>
+                                <td><audio controls src="fest/enh30.wav"></audio><img src="fest/enh0.png" class="spec-img"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center"><span class="ser-tag">10 dB</span></td>
+                                <td><audio controls src="fest/ref10.wav"></audio><img src="fest/ref10.png" class="spec-img"></td>
+                                <td><audio controls src="fest/origin10.wav"></audio><img src="fest/origin10.png" class="spec-img"></td>
+                                <td><audio controls src="fest/enh20.wav"></audio><img src="fest/enh10.png" class="spec-img"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 3. 近端单讲 (NEST) -->
+            <div class="tab-pane fade" id="nest" role="tabpanel">
+                <div class="alert alert-custom small"><b>近端单讲说明：</b> 展示系统在无回声工况下对近端语音的透明传输能力，考察语音保真度。</div>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr class="column-header">
+                                <th style="width: 20%">场景描述</th>
+                                <th style="width: 40%">原始麦克风 (Mic)</th>
+                                <th style="width: 40%">增强后 (Enhanced)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-center"><b>双人对话场景</b></td>
+                                <td><audio controls src="nest/2person_origin.wav"></audio><img src="nest/2person_origin.png" class="spec-img"></td>
+                                <td><audio controls src="nest/2person_enh.wav"></audio><img src="nest/2person_enh.png" class="spec-img"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center"><b>背景音乐干扰场景</b></td>
+                                <td><audio controls src="nest/music1_origin.wav"></audio><img src="nest/music1_origin.png" class="spec-img"></td>
+                                <td><audio controls src="nest/music1_enh.wav"></audio><img src="nest/music1_enh.png" class="spec-img"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center"><b>常规录音场景</b></td>
+                                <td><audio controls src="nest/record_origin.wav"></audio><img src="nest/record_origin.png" class="spec-img"></td>
+                                <td><audio controls src="nest/record_enh.wav"></audio><img src="nest/record_enh.png" class="spec-img"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <!-- <p>厦门大学 | 信息与信号处理实验室</p> -->
+             <p>感谢聆听</p>
+            <p>&copy; 2026 AEC System Demo. All Rights Reserved.</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
